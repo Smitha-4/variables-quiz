@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code.org Game Lab: Variables & Sprites Quiz</title>
+    <!-- Tailwind CSS for modern responsive layout -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace']
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdfa',
+                            100: '#ccfbf1',
+                            500: '#14b8a6',
+                            600: '#0d9488',
+                            700: '#0f766e',
+                            800: '#115e59',
+                            900: '#134e4a',
+                        },
+                        codebg: '#1e293b'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        .code-block {
+            background-color: #1e293b;
+            border-left: 4px solid #14b8a6;
+            font-family: 'Fira Code', monospace;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-sans antialiased selection:bg-brand-500 selection:text-white">
+
+    <!-- Header / Navbar -->
+    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50 backdrop-blur bg-opacity-80">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gradient-to-tr from-brand-600 to-teal-400 text-white p-2.5 rounded-xl shadow-lg shadow-brand-500/20">
+                    <i class="fa-solid fa-gamepad text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg sm:text-xl text-white tracking-tight">Code.org Game Lab</h1>
+                    <p class="text-xs text-slate-400 font-medium">Variables & Sprite Mastery Quiz</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span id="header-question-counter" class="hidden text-xs font-semibold px-3 py-1.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">
+                    Q <span id="current-q-num">1</span>/30
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow max-w-5xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-10 flex flex-col justify-center">
+
+        <!-- START SCREEN -->
+        <div id="start-screen" class="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-10 shadow-2xl backdrop-blur-xl max-w-2xl mx-auto text-center">
+            <div class="w-20 h-20 bg-brand-500/10 text-brand-500 rounded-2xl flex items-center justify-center mx-auto mb-6 text-3xl border border-brand-500/20">
+                <i class="fa-solid fa-code"></i>
+            </div>
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-white mb-3 tracking-tight">Test Your CS Discoveries Skills!</h2>
+            <p class="text-slate-400 text-sm sm:text-base mb-8 max-w-md mx-auto leading-relaxed">
+                Master variables, sprite properties, coordinates, animations, and the draw loop in Code.org's Game Lab across 30 interactive questions.
+            </p>
+
+            <!-- Quiz Highlights -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8 text-left text-xs font-medium">
+                <div class="bg-slate-800/60 border border-slate-700/60 p-3 rounded-xl flex items-center space-x-2">
+                    <i class="fa-solid fa-square-check text-brand-500 text-base"></i>
+                    <span class="text-slate-300">30 Questions</span>
+                </div>
+                <div class="bg-slate-800/60 border border-slate-700/60 p-3 rounded-xl flex items-center space-x-2">
+                    <i class="fa-solid fa-lightbulb text-amber-400 text-base"></i>
+                    <span class="text-slate-300">Detailed Hints</span>
+                </div>
+                <div class="bg-slate-800/60 border border-slate-700/60 p-3 rounded-xl col-span-2 sm:col-span-1 flex items-center space-x-2">
+                    <i class="fa-solid fa-rotate-right text-teal-400 text-base"></i>
+                    <span class="text-slate-300">Retry Missed Qs</span>
+                </div>
+            </div>
+
+            <!-- Quiz Topic Mode Selection -->
+            <div class="space-y-3 mb-8">
+                <button onclick="startQuiz('all')" class="w-full bg-gradient-to-r from-brand-600 to-teal-500 hover:from-brand-500 hover:to-teal-400 text-white font-bold py-4 px-6 rounded-2xl shadow-lg shadow-brand-500/25 transition duration-200 transform hover:-translate-y-0.5 flex items-center justify-center space-x-2 text-base">
+                    <span>Start Complete 30-Question Quiz</span>
+                    <i class="fa-solid fa-arrow-right text-sm"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- QUIZ CONTAINER -->
+        <div id="quiz-screen" class="hidden space-y-6">
+            
+            <!-- Progress & Stats Header -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-lg">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-3">
+                    <div class="flex items-center space-x-3">
+                        <span id="question-category" class="bg-brand-500/10 text-brand-400 text-xs font-semibold px-2.5 py-1 rounded-md border border-brand-500/20">
+                            Category
+                        </span>
+                        <span id="question-counter-text" class="text-xs text-slate-400 font-medium">Question 1 of 30</span>
+                    </div>
+                    <div class="flex items-center space-x-4 text-xs font-semibold">
+                        <div class="text-emerald-400 flex items-center space-x-1.5 bg-emerald-500/10 px-2.5 py-1 rounded-md border border-emerald-500/20">
+                            <i class="fa-solid fa-circle-check"></i>
+                            <span>Correct: <span id="score-correct">0</span></span>
+                        </div>
+                        <div class="text-rose-400 flex items-center space-x-1.5 bg-rose-500/10 px-2.5 py-1 rounded-md border border-rose-500/20">
+                            <i class="fa-solid fa-circle-xmark"></i>
+                            <span>Incorrect: <span id="score-incorrect">0</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+                    <div id="progress-bar" class="bg-gradient-to-r from-brand-500 to-teal-400 h-2 rounded-full transition-all duration-300 w-0"></div>
+                </div>
+            </div>
+
+            <!-- Question Card -->
+            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden">
+                <h3 id="question-text" class="text-lg sm:text-2xl font-bold text-white mb-4 leading-snug">
+                    Question text goes here?
+                </h3>
+
+                <!-- Code Snippet Area (dynamically shown if present) -->
+                <div id="code-container" class="hidden mb-6">
+                    <div class="flex items-center justify-between bg-slate-950 px-4 py-1.5 rounded-t-xl border border-slate-800 border-b-0 text-xs text-slate-400">
+                        <span class="font-mono flex items-center space-x-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-red-500 inline-block"></span>
+                            <span class="w-2.5 h-2.5 rounded-full bg-yellow-500 inline-block"></span>
+                            <span class="w-2.5 h-2.5 rounded-full bg-green-500 inline-block"></span>
+                            <span class="ml-2 font-semibold text-slate-300">Game Lab Workspace</span>
+                        </span>
+                        <i class="fa-solid fa-code text-slate-500"></i>
+                    </div>
+                    <pre class="code-block text-slate-200 text-xs sm:text-sm p-4 rounded-b-xl overflow-x-auto border border-slate-800 leading-relaxed"><code id="code-text"></code></pre>
+                </div>
+
+                <!-- Multiple Choice Options -->
+                <div id="options-container" class="grid grid-cols-1 gap-3">
+                    <!-- Options injected via JavaScript -->
+                </div>
+
+                <!-- Explanation Banner (Hidden until answer selected) -->
+                <div id="explanation-box" class="hidden mt-6 p-4 sm:p-5 rounded-2xl border transition-all duration-300">
+                    <div class="flex items-start space-x-3">
+                        <div id="explanation-icon" class="text-xl mt-0.5"></div>
+                        <div>
+                            <h4 id="explanation-title" class="font-bold text-sm mb-1">Feedback Title</h4>
+                            <p id="explanation-text" class="text-xs sm:text-sm text-slate-300 leading-relaxed"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action / Next Buttons -->
+                <div class="mt-6 flex justify-between items-center pt-4 border-t border-slate-800/80">
+                    <button id="hint-btn" onclick="toggleHint()" class="text-xs text-slate-400 hover:text-amber-400 font-semibold flex items-center space-x-1.5 transition">
+                        <i class="fa-regular fa-lightbulb text-amber-400"></i>
+                        <span>Need a hint?</span>
+                    </button>
+                    <button id="next-btn" onclick="nextQuestion()" disabled class="opacity-50 cursor-not-allowed bg-brand-600 hover:bg-brand-500 text-white font-bold py-2.5 px-6 rounded-xl transition duration-200 text-xs sm:text-sm flex items-center space-x-2">
+                        <span>Next Question</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+
+                <!-- Hint display -->
+                <div id="hint-box" class="hidden mt-3 p-3 bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs rounded-xl">
+                    <i class="fa-solid fa-circle-info mr-1.5"></i> <span id="hint-text"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- SUMMARY / RESULTS SCREEN -->
+        <div id="summary-screen" class="hidden bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-10 shadow-2xl backdrop-blur-xl max-w-3xl mx-auto text-center">
+            <div id="score-badge" class="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl font-black border-4 shadow-xl">
+                <!-- Score percentage -->
+            </div>
+            <h2 id="result-title" class="text-2xl sm:text-3xl font-extrabold text-white mb-2">Quiz Completed!</h2>
+            <p id="result-message" class="text-slate-400 text-sm mb-6 max-w-md mx-auto"></p>
+
+            <!-- Score breakdown grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+                <div class="bg-slate-800/60 border border-slate-700/60 p-4 rounded-2xl">
+                    <span class="block text-slate-400 text-xs font-semibold mb-1">Total Questions</span>
+                    <span id="summary-total" class="text-2xl font-bold text-white">30</span>
+                </div>
+                <div class="bg-slate-800/60 border border-slate-700/60 p-4 rounded-2xl">
+                    <span class="block text-emerald-400 text-xs font-semibold mb-1">Correct</span>
+                    <span id="summary-correct" class="text-2xl font-bold text-emerald-400">0</span>
+                </div>
+                <div class="bg-slate-800/60 border border-slate-700/60 p-4 rounded-2xl">
+                    <span class="block text-rose-400 text-xs font-semibold mb-1">Incorrect</span>
+                    <span id="summary-incorrect" class="text-2xl font-bold text-rose-400">0</span>
+                </div>
+                <div class="bg-slate-800/60 border border-slate-700/60 p-4 rounded-2xl">
+                    <span class="block text-brand-400 text-xs font-semibold mb-1">Accuracy</span>
+                    <span id="summary-accuracy" class="text-2xl font-bold text-brand-400">0%</span>
+                </div>
+            </div>
+
+            <!-- Review Missed Questions Accordion Container -->
+            <div id="missed-questions-section" class="hidden text-left mb-8">
+                <h3 class="text-base font-bold text-white mb-3 flex items-center justify-between">
+                    <span><i class="fa-solid fa-list-check text-rose-400 mr-2"></i>Review Missed Questions</span>
+                    <span id="missed-count-tag" class="bg-rose-500/20 text-rose-300 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-rose-500/30"></span>
+                </h3>
+                <div id="missed-list" class="space-y-3 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
+                    <!-- Missed questions dynamically populated -->
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+                <button id="retry-missed-btn" onclick="retryMissedQuestions()" class="hidden w-full sm:w-auto bg-amber-600 hover:bg-amber-500 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition duration-200 text-sm flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span>Retry Missed Questions Only</span>
+                </button>
+                <button onclick="restartQuiz()" class="w-full sm:w-auto bg-brand-600 hover:bg-brand-500 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition duration-200 text-sm flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-arrows-rotate"></i>
+                    <span>Restart Full Quiz</span>
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 border-t border-slate-900 py-4 text-center text-xs text-slate-500">
+        <div class="max-w-5xl mx-auto px-4">
+            Code.org CS Discoveries Game Lab Interactive Assessment &bull; Variables & Sprites
+        </div>
+    </footer>
+
+    <!-- JavaScript Quiz Engine & Data -->
+    <script>
+        // Question Data Bank (30 Comprehensive Questions on Code.org Game Lab Variables & Sprites)
+        const allQuestions = [
+            // 1. Variable Basics & Declaration
+            {
+                id: 1,
+                category: "Variables",
+                question: "Which keyword is used to declare a new variable in Code.org's Game Lab / JavaScript?",
+                code: null,
+                options: [
+                    "make x = 10;",
+                    "var x = 10;",
+                    "create x = 10;",
+                    "variable x = 10;"
+                ],
+                correct: 1,
+                hint: "Look for the 3-letter abbreviation for 'variable'.",
+                explanation: "In JavaScript and Code.org Game Lab, 'var' is used to create (declare) a new variable, such as 'var score = 0;'."
+            },
+            {
+                id: 2,
+                category: "Variables",
+                question: "What is the primary rule when reassigning an existing variable's value later in your code?",
+                code: "var score = 0;\nscore = 5;",
+                options: [
+                    "You must use 'var' again every time you change the value.",
+                    "Do NOT use 'var' again when updating an existing variable.",
+                    "Variables can only be set once and never changed.",
+                    "You must use the 'set' keyword."
+                ],
+                correct: 1,
+                hint: "'var' creates the variable container once. You don't need to create it again when modifying its contents.",
+                explanation: "You only use 'var' once when creating the variable. When reassigning or updating its value, simply write the variable name followed by = (e.g., score = 5)."
+            },
+            {
+                id: 3,
+                category: "Variables",
+                question: "What will be printed to the console at the end of this code snippet?",
+                code: "var count = 10;\ncount = count + 5;\nconsole.log(count);",
+                options: [
+                    "10",
+                    "5",
+                    "15",
+                    "count + 5"
+                ],
+                correct: 2,
+                hint: "The computer evaluates the right side (10 + 5) first, then stores the result in 'count'.",
+                explanation: "The counter pattern 'count = count + 5' takes the old value (10), adds 5 to make 15, and stores 15 back into 'count'."
+            },
+            {
+                id: 4,
+                category: "Variables",
+                question: "Which of the following variable names is INCORRECT or invalid in JavaScript/Game Lab?",
+                code: null,
+                options: [
+                    "playerScore",
+                    "player_1",
+                    "2ndPlayer",
+                    "playerTwo"
+                ],
+                correct: 2,
+                hint: "Variable names cannot start with a number.",
+                explanation: "Variable names cannot start with a digit (number). They can contain numbers later (e.g., player2), letters, underscores, and camelCase."
+            },
+
+            // 2. Grid Coordinates & Canvas
+            {
+                id: 5,
+                category: "Grid System",
+                question: "What are the dimensions (width and height in pixels) of the standard Game Lab grid display canvas?",
+                code: null,
+                options: [
+                    "200 x 200 pixels",
+                    "400 x 400 pixels",
+                    "800 x 600 pixels",
+                    "100 x 100 pixels"
+                ],
+                correct: 1,
+                hint: "The top-left corner is (0,0) and the bottom-right corner is (400, 400).",
+                explanation: "The standard Game Lab grid is 400 pixels wide by 400 pixels tall, starting at (0,0) at the top-left to (400,400) at the bottom-right."
+            },
+            {
+                id: 6,
+                category: "Grid System",
+                question: "Where is the coordinate origin (x: 0, y: 0) located on the Game Lab screen?",
+                code: null,
+                options: [
+                    "Bottom-left corner",
+                    "Center of the screen",
+                    "Top-left corner",
+                    "Top-right corner"
+                ],
+                correct: 2,
+                hint: "Unlike standard algebra, computer screens start (0,0) at the upper corner.",
+                explanation: "In computer graphics and Game Lab, (0,0) is located at the top-left corner of the display."
+            },
+            {
+                id: 7,
+                category: "Grid System",
+                question: "If a sprite moves straight DOWN the screen, how do its (x, y) coordinates change?",
+                code: null,
+                options: [
+                    "x increases, y stays the same",
+                    "y increases, x stays the same",
+                    "y decreases, x stays the same",
+                    "Both x and y decrease"
+                ],
+                correct: 1,
+                hint: "Remember that y = 0 is at the top and y = 400 is at the bottom.",
+                explanation: "In Game Lab, moving DOWN increases the y-coordinate. Moving UP decreases the y-coordinate."
+            },
+
+            // 3. Sprite Creation & Drawing
+            {
+                id: 8,
+                category: "Sprite Basics",
+                question: "What does the code `var hero = createSprite(200, 300);` do?",
+                code: "var hero = createSprite(200, 300);",
+                options: [
+                    "Creates a sprite named 'hero' at x=200, y=300 and draws it immediately.",
+                    "Creates a sprite named 'hero' at x=200, y=300, but does NOT display it until `drawSprites()` is called.",
+                    "Sets the background size to 200x300.",
+                    "Moves an existing sprite to position (200, 300)."
+                ],
+                correct: 1,
+                hint: "Sprites require a special command to actually display on the screen.",
+                explanation: "`createSprite(x, y)` initializes the sprite object in memory at position (200, 300). However, sprites are invisible until `drawSprites()` is executed in the code."
+            },
+            {
+                id: 9,
+                category: "Sprite Basics",
+                question: "Which block/command MUST be called inside the draw loop to actually render sprites on the screen?",
+                code: null,
+                options: [
+                    "renderAll()",
+                    "showSprites()",
+                    "drawSprites()",
+                    "updateScreen()"
+                ],
+                correct: 2,
+                hint: "It begins with 'draw' and is plural.",
+                explanation: "`drawSprites()` tells Game Lab to draw all created sprites onto the screen at their current positions and properties."
+            },
+            {
+                id: 10,
+                category: "Sprite Basics",
+                question: "By default, where is a sprite's anchor/center point when placed at coordinates (x, y)?",
+                code: null,
+                options: [
+                    "Top-left corner of the sprite image",
+                    "Center of the sprite image",
+                    "Bottom-left corner of the sprite image",
+                    "Top-right corner of the sprite image"
+                ],
+                correct: 1,
+                hint: "Game Lab aligns sprites using their midpoint.",
+                explanation: "When you specify coordinates for a sprite (e.g. 200, 200), Game Lab positions the EXACT CENTER of the sprite at those coordinates."
+            },
+
+            // 4. Sprite Animations & Images
+            {
+                id: 11,
+                category: "Sprite Animations",
+                question: "How do you link a sprite to an image/animation created in the Animation Tab?",
+                code: "var coin = createSprite(100, 100);\ncoin.setAnimation(\"gold_coin\");",
+                options: [
+                    "coin.setImage(\"gold_coin\");",
+                    "coin.setAnimation(\"gold_coin\");",
+                    "setSpriteAnimation(coin, \"gold_coin\");",
+                    "coin.animation = \"gold_coin\";"
+                ],
+                correct: 1,
+                hint: "Use the method `.setAnimation(...)`.",
+                explanation: "`sprite.setAnimation(\"label\")` connects a sprite object to the visual image or animated frame set configured under that label in the Animation Tab."
+            },
+            {
+                id: 12,
+                category: "Sprite Animations",
+                question: "What happens if you call `sprite.setAnimation(\"cat\");` BEFORE declaring `var sprite = createSprite(200,200);`?",
+                code: "cat.setAnimation(\"cat\");\nvar cat = createSprite(200, 200);",
+                options: [
+                    "It works normally.",
+                    "An error occurs because the sprite object does not exist yet.",
+                    "Game Lab automatically creates the sprite for you.",
+                    "The sprite appears at (0,0)."
+                ],
+                correct: 1,
+                hint: "You cannot change properties of something that hasn't been created yet!",
+                explanation: "Order matters! You must create the sprite with `createSprite()` BEFORE setting its properties or animations. Otherwise, JavaScript throws an error because the variable is undefined."
+            },
+
+            // 5. Sprite Properties
+            {
+                id: 13,
+                category: "Sprite Properties",
+                question: "Which property controls the size/scaling of a sprite relative to its original size?",
+                code: "var monster = createSprite(200, 200);\nmonster.scale = 0.5;",
+                options: [
+                    "monster.size = 0.5;",
+                    "monster.scale = 0.5;",
+                    "monster.zoom = 0.5;",
+                    "monster.width = 0.5;"
+                ],
+                correct: 1,
+                hint: "1.0 is 100% size, 0.5 is 50% size.",
+                explanation: "`sprite.scale` resizes a sprite proportionally. A scale of 1 is normal size, 0.5 makes it half size, and 2 doubles its size."
+            },
+            {
+                id: 14,
+                category: "Sprite Properties",
+                question: "What will happen to a sprite if you set `sprite.rotation = 90;`?",
+                code: "ship.rotation = 90;",
+                options: [
+                    "It moves 90 pixels to the right.",
+                    "It rotates 90 degrees clockwise.",
+                    "It rotates 90 degrees counter-clockwise.",
+                    "It flips upside down completely (180 degrees)."
+                ],
+                correct: 1,
+                hint: "Rotation angle is measured in degrees, rotating clockwise.",
+                explanation: "`sprite.rotation` turns the sprite clockwise by the specified degree angle (0 to 360)."
+            },
+            {
+                id: 15,
+                category: "Sprite Properties",
+                question: "How can you temporarily hide a sprite without deleting it from your code?",
+                code: null,
+                options: [
+                    "sprite.hide()",
+                    "sprite.visible = false;",
+                    "sprite.display = 0;",
+                    "sprite.scale = 0;"
+                ],
+                correct: 1,
+                hint: "Look for the boolean property that controls visibility.",
+                explanation: "`sprite.visible = false;` stops the sprite from being drawn when `drawSprites()` is called, while keeping all its properties and code intact."
+            },
+            {
+                id: 16,
+                category: "Sprite Properties",
+                question: "Which line of code correctly doubles the width of a sprite while maintaining its current height?",
+                code: "var box = createSprite(200, 200);",
+                options: [
+                    "box.width = box.width * 2;",
+                    "box.scale = 2;",
+                    "box.x = box.x * 2;",
+                    "box.size(200, 100);"
+                ],
+                correct: 0,
+                hint: "`box.scale = 2` would double BOTH width and height. Modify `.width` directly.",
+                explanation: "`box.width = box.width * 2;` specifically updates only the sprite's width property without scaling height."
+            },
+
+            // 6. Draw Loop Concepts & Animation
+            {
+                id: 17,
+                category: "Draw Loop",
+                question: "How many times per second does the `function draw() { ... }` loop run by default in Game Lab?",
+                code: "function draw() {\n  // Code here\n}",
+                options: [
+                    "1 time per second",
+                    "30 times per second",
+                    "60 times per second",
+                    "100 times per second"
+                ],
+                correct: 1,
+                hint: "Standard Game Lab frame rate is 30 FPS.",
+                explanation: "The `draw` function runs repeatedly at 30 frames per second (30 FPS), creating smooth animations and continuous updates."
+            },
+            {
+                id: 18,
+                category: "Draw Loop",
+                question: "Why should `var player = createSprite(200, 200);` usually be placed OUTSIDE (above) the draw loop?",
+                code: null,
+                options: [
+                    "Because createSprite doesn't work inside functions.",
+                    "Placing it inside the draw loop would create 30 new sprites every second, causing lag and bugs.",
+                    "Because sprites can only be drawn at frame 1.",
+                    "It doesn't matter where you place it."
+                ],
+                correct: 1,
+                hint: "The draw loop runs 30 times a second. Do you want 30 new players created every single second?",
+                explanation: "Sprites should be initialized ONCE outside the draw loop. Creating sprites inside the draw loop repeatedly allocates new objects 30 times/sec, wasting memory and creating stacking sprites."
+            },
+            {
+                id: 19,
+                category: "Draw Loop",
+                question: "What happens if you do NOT call `background(\"white\");` inside the draw loop before drawing moving sprites?",
+                code: "function draw() {\n  // background(\"white\"); omitted\n  ball.x = ball.x + 2;\n  drawSprites();\n}",
+                options: [
+                    "The sprite stops moving.",
+                    "The sprite leaves a continuous trail across the screen.",
+                    "The screen stays completely black.",
+                    "An execution error occurs."
+                ],
+                correct: 1,
+                hint: "Without wiping the previous frame, previous drawings remain on screen.",
+                explanation: "Calling `background(...)` at the top of the draw loop clears the screen for each new frame. Without it, new sprite positions are drawn over old ones, leaving a trail."
+            },
+            {
+                id: 20,
+                category: "Draw Loop",
+                question: "What effect will this code inside the draw loop have on the sprite named `car`?",
+                code: "function draw() {\n  background(\"gray\");\n  car.x = car.x + 3;\n  drawSprites();\n}",
+                options: [
+                    "The car moves to the left at a steady speed.",
+                    "The car moves to the right at a steady speed.",
+                    "The car moves downwards.",
+                    "The car rotates by 3 degrees."
+                ],
+                correct: 1,
+                hint: "Increasing the x coordinate moves an object to the right.",
+                explanation: "Adding 3 to `car.x` on every frame continuously moves the car towards higher x values, which is to the RIGHT."
+            },
+            {
+                id: 21,
+                category: "Draw Loop",
+                question: "Predict what happens when this code runs:",
+                code: "function draw() {\n  background(\"blue\");\n  star.rotation = star.rotation + 5;\n  drawSprites();\n}",
+                options: [
+                    "The star scales up by 5 pixels.",
+                    "The star spins continuously clockwise.",
+                    "The star moves diagonally.",
+                    "The star flashes on and off."
+                ],
+                correct: 1,
+                hint: "Updating rotation inside the draw loop continuously turns the sprite.",
+                explanation: "Increasing `star.rotation` by 5 degrees every frame (30 times/sec) produces a smooth clockwise spinning animation."
+            },
+
+            // 7. Variable Scope & Sprite Updating
+            {
+                id: 22,
+                category: "Variables & Movement",
+                question: "What is the result of the following code inside the draw loop?",
+                code: "var speed = 2;\nfunction draw() {\n  background(\"white\");\n  ghost.y = ghost.y - speed;\n  drawSprites();\n}",
+                options: [
+                    "The ghost moves UP the screen.",
+                    "The ghost moves DOWN the screen.",
+                    "The ghost moves LEFT.",
+                    "The ghost does not move."
+                ],
+                correct: 0,
+                hint: "Decreasing y values moves toward y = 0 (top of canvas).",
+                explanation: "Subtracting speed from `ghost.y` decreases its y coordinate, causing it to move UP toward y = 0."
+            },
+            {
+                id: 23,
+                category: "Variables",
+                question: "Look at the code snippet. What will be the value of `score` after the user clicks the space key once?",
+                code: "var score = 0;\nfunction draw() {\n  if (keyWentDown(\"space\")) {\n    score = score + 10;\n  }\n}",
+                options: [
+                    "0",
+                    "10",
+                    "30",
+                    "Undefined"
+                ],
+                correct: 1,
+                hint: "`keyWentDown` triggers only ONCE when pressed.",
+                explanation: "`keyWentDown(\"space\")` evaluates to true only on the single frame the key is pressed, adding 10 to score once (0 + 10 = 10)."
+            },
+            {
+                id: 24,
+                category: "Sprite Properties",
+                question: "Which property controls the transparency or opacity of a sprite in Game Lab?",
+                code: "ghost.tint = \"rgba(255, 255, 255, 0.5)\";\n// or ghost.alpha",
+                options: [
+                    "sprite.alpha",
+                    "sprite.hidden",
+                    "sprite.clear",
+                    "sprite.ghost"
+                ],
+                correct: 0,
+                hint: "Alpha refers to transparency levels between 0 (invisible) and 1 (opaque).",
+                explanation: "`sprite.alpha` sets the opacity level (from 0.0 completely transparent to 1.0 completely solid/opaque)."
+            },
+
+            // 8. Common Errors & Debugging
+            {
+                id: 25,
+                category: "Debugging",
+                question: "A student writes this code, but the sprite is completely missing from the screen. Why?",
+                code: "var rocket = createSprite(200, 200);\nrocket.setAnimation(\"rocket_img\");\n\nfunction draw() {\n  background(\"black\");\n}",
+                options: [
+                    "The background color is black.",
+                    "The code is missing `drawSprites();` inside the draw function.",
+                    "The sprite coordinates (200, 200) are off screen.",
+                    "You cannot set animations before the draw loop."
+                ],
+                correct: 1,
+                hint: "Which command tells Game Lab to actually display all sprites?",
+                explanation: "Without `drawSprites();` inside the `draw()` loop, Game Lab never renders the sprites onto the canvas display."
+            },
+            {
+                id: 26,
+                category: "Debugging",
+                question: "Why does the sprite in this snippet disappear almost instantly after the game starts?",
+                code: "var ball = createSprite(200, 200);\nfunction draw() {\n  background(\"white\");\n  ball.y = ball.y + 50;\n  drawSprites();\n}",
+                options: [
+                    "It moves up too fast.",
+                    "It moves down at 50 pixels per frame (1500 px/sec), rapidly flying off the bottom of the 400px canvas.",
+                    "Setting speed to 50 causes a syntax error.",
+                    "The background wipes out the ball forever."
+                ],
+                correct: 1,
+                hint: "Canvas height is 400 pixels. At +50 pixels per frame (30 FPS), calculate how fast it moves.",
+                explanation: "+50 pixels per frame means in just 4 frames (0.13 seconds), the sprite moves 200 pixels down and exits the 400px canvas."
+            },
+            {
+                id: 27,
+                category: "Debugging",
+                question: "What is the problem with this code block?",
+                code: "function draw() {\n  var coin = createSprite(200, 200);\n  coin.setAnimation(\"coin\");\n  background(\"white\");\n  drawSprites();\n}",
+                options: [
+                    "The sprite will be hidden under the background color because `background()` is called AFTER creating the sprite, and new sprites are created endlessly.",
+                    "The code has valid syntax and runs perfectly without issues.",
+                    "`createSprite` cannot take numerical parameters.",
+                    "Animations cannot be set inside `draw()`."
+                ],
+                correct: 0,
+                hint: "Consider both creation inside the draw loop and the order of `background()` vs `drawSprites()`.",
+                explanation: "First, creating sprites inside the draw loop creates 30 duplicate sprites every second. Second, calling `background()` wipes the canvas clean, but here `drawSprites()` comes after `background()`, so the real issue is creating excessive sprites inside the loop every frame."
+            },
+
+            // 9. Advanced Properties & Interaction Prep
+            {
+                id: 28,
+                category: "Sprite Properties",
+                question: "If you want to check or change a sprite's horizontal position, which property do you use?",
+                code: null,
+                options: [
+                    "sprite.x",
+                    "sprite.y",
+                    "sprite.left",
+                    "sprite.positionX"
+                ],
+                correct: 0,
+                hint: "Horizontal axis is the X-axis.",
+                explanation: "`sprite.x` accesses or updates the horizontal x-coordinate of the sprite's center."
+            },
+            {
+                id: 29,
+                category: "Sprite Properties",
+                question: "Which expression moves a sprite 5 pixels to the LEFT every frame?",
+                code: null,
+                options: [
+                    "sprite.x = sprite.x + 5;",
+                    "sprite.x = sprite.x - 5;",
+                    "sprite.y = sprite.y - 5;",
+                    "sprite.y = sprite.y + 5;"
+                ],
+                correct: 1,
+                hint: "Left means decreasing x value (towards x = 0).",
+                explanation: "Decreasing `sprite.x` by 5 (`sprite.x = sprite.x - 5`) shifts the sprite towards 0 on the horizontal axis (to the left)."
+            },
+            {
+                id: 30,
+                category: "Variables & Sprites",
+                question: "Which statement accurately describes the relationship between variables and sprites in Game Lab?",
+                code: "var hero = createSprite(100, 200);",
+                options: [
+                    "A sprite IS a variable holding a complex sprite object with multiple properties (like .x, .y, .scale).",
+                    "Variables and sprites are completely unrelated and cannot be used together.",
+                    "Variables can only store numbers, while sprites can only store text.",
+                    "You cannot assign a sprite to a variable name."
+                ],
+                correct: 0,
+                hint: "Notice `var hero = ...`. What is `hero`?",
+                explanation: "In Game Lab, `createSprite()` returns a sprite object, which is stored inside a variable name (like `hero`). You then access its properties using dot notation (`hero.x`, `hero.scale`)."
+            }
+        ];
+
+        // Quiz State Management
+        let activeQuestions = [];
+        let currentQuestionIndex = 0;
+        let userAnswers = []; // stores { questionId, selectedIndex, isCorrect }
+        let scoreCorrect = 0;
+        let scoreIncorrect = 0;
+        let isAnswered = false;
+
+        // Initialize App
+        window.onload = function() {
+            // Screen initialization
+        };
+
+        // Start Quiz Mode
+        function startQuiz(mode) {
+            if (mode === 'all') {
+                activeQuestions = [...allQuestions];
+            }
+            
+            // Reset counters
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            scoreCorrect = 0;
+            scoreIncorrect = 0;
+
+            // DOM Updates
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('summary-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            document.getElementById('header-question-counter').classList.remove('hidden');
+
+            renderQuestion();
+        }
+
+        // Render Current Question
+        function renderQuestion() {
+            isAnswered = false;
+            const q = activeQuestions[currentQuestionIndex];
+
+            // Reset UI States
+            document.getElementById('next-btn').disabled = true;
+            document.getElementById('next-btn').classList.add('opacity-50', 'cursor-not-allowed');
+            document.getElementById('explanation-box').classList.add('hidden');
+            document.getElementById('hint-box').classList.add('hidden');
+
+            // Update Progress Header
+            document.getElementById('current-q-num').innerText = currentQuestionIndex + 1;
+            document.getElementById('question-counter-text').innerText = `Question ${currentQuestionIndex + 1} of ${activeQuestions.length}`;
+            document.getElementById('question-category').innerText = q.category;
+            document.getElementById('score-correct').innerText = scoreCorrect;
+            document.getElementById('score-incorrect').innerText = scoreIncorrect;
+
+            // Progress Bar Width
+            const progressPercent = ((currentQuestionIndex) / activeQuestions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progressPercent}%`;
+
+            // Question Text & Code Snippet
+            document.getElementById('question-text').innerText = q.question;
+            const codeContainer = document.getElementById('code-container');
+            if (q.code) {
+                document.getElementById('code-text').innerText = q.code;
+                codeContainer.classList.remove('hidden');
+            } else {
+                codeContainer.classList.add('hidden');
+            }
+
+            // Hint Text
+            document.getElementById('hint-text').innerText = q.hint;
+
+            // Render Options
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            const optionLetters = ['A', 'B', 'C', 'D'];
+
+            q.options.forEach((optText, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `option-btn w-full text-left p-4 rounded-2xl border border-slate-800 bg-slate-800/40 hover:bg-slate-800 hover:border-slate-700 transition duration-150 flex items-center space-x-3 text-sm sm:text-base font-medium text-slate-200 group focus:outline-none`;
+                btn.onclick = () => selectOption(idx);
+                btn.id = `option-${idx}`;
+
+                btn.innerHTML = `
+                    <span class="w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-slate-400 group-hover:border-brand-500 group-hover:text-brand-400 shrink-0 transition">
+                        ${optionLetters[idx]}
+                    </span>
+                    <span class="flex-grow">${escapeHtml(optText)}</span>
+                    <span class="status-icon text-lg hidden"></span>
+                `;
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        // Handle Option Selection
+        function selectOption(selectedIndex) {
+            if (isAnswered) return; // Prevent changing answer
+            isAnswered = true;
+
+            const q = activeQuestions[currentQuestionIndex];
+            const isCorrect = (selectedIndex === q.correct);
+
+            // Record Answer
+            userAnswers.push({
+                question: q,
+                selectedIndex: selectedIndex,
+                isCorrect: isCorrect
+            });
+
+            if (isCorrect) {
+                scoreCorrect++;
+            } else {
+                scoreIncorrect++;
+            }
+
+            // Update stats counter
+            document.getElementById('score-correct').innerText = scoreCorrect;
+            document.getElementById('score-incorrect').innerText = scoreIncorrect;
+
+            // Style Option Buttons
+            q.options.forEach((_, idx) => {
+                const btn = document.getElementById(`option-${idx}`);
+                btn.disabled = true;
+                btn.classList.remove('hover:bg-slate-800', 'hover:border-slate-700');
+
+                const iconSpan = btn.querySelector('.status-icon');
+                iconSpan.classList.remove('hidden');
+
+                if (idx === q.correct) {
+                    // Correct Answer styling
+                    btn.classList.add('bg-emerald-950/40', 'border-emerald-500/60', 'text-emerald-200');
+                    iconSpan.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i>`;
+                } else if (idx === selectedIndex && !isCorrect) {
+                    // Wrong Chosen Answer styling
+                    btn.classList.add('bg-rose-950/40', 'border-rose-500/60', 'text-rose-200');
+                    iconSpan.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-400"></i>`;
+                } else {
+                    btn.classList.add('opacity-40');
+                }
+            });
+
+            // Show Explanation Box
+            const expBox = document.getElementById('explanation-box');
+            const expTitle = document.getElementById('explanation-title');
+            const expText = document.getElementById('explanation-text');
+            const expIcon = document.getElementById('explanation-icon');
+
+            expBox.classList.remove('hidden');
+            if (isCorrect) {
+                expBox.className = "mt-6 p-4 sm:p-5 rounded-2xl border bg-emerald-950/30 border-emerald-500/30 text-emerald-300";
+                expIcon.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i>`;
+                expTitle.innerText = "Correct!";
+            } else {
+                expBox.className = "mt-6 p-4 sm:p-5 rounded-2xl border bg-rose-950/30 border-rose-500/30 text-rose-300";
+                expIcon.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-rose-400"></i>`;
+                expTitle.innerText = "Incorrect";
+            }
+            expText.innerText = q.explanation;
+
+            // Enable Next Button
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.disabled = false;
+            nextBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            nextBtn.focus();
+        }
+
+        // Toggle Hint Display
+        function toggleHint() {
+            const hintBox = document.getElementById('hint-box');
+            hintBox.classList.toggle('hidden');
+        }
+
+        // Advance to Next Question or Summary
+        function nextQuestion() {
+            if (!isAnswered) return;
+
+            currentQuestionIndex++;
+            if (currentQuestionIndex < activeQuestions.length) {
+                renderQuestion();
+            } else {
+                showSummary();
+            }
+        }
+
+        // Display Summary Screen
+        function showSummary() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('summary-screen').classList.remove('hidden');
+            document.getElementById('header-question-counter').classList.add('hidden');
+
+            const total = activeQuestions.length;
+            const accuracy = Math.round((scoreCorrect / total) * 100);
+
+            document.getElementById('summary-total').innerText = total;
+            document.getElementById('summary-correct').innerText = scoreCorrect;
+            document.getElementById('summary-incorrect').innerText = scoreIncorrect;
+            document.getElementById('summary-accuracy').innerText = `${accuracy}%`;
+
+            // Badge & Styling based on score
+            const badge = document.getElementById('score-badge');
+            const title = document.getElementById('result-title');
+            const message = document.getElementById('result-message');
+
+            badge.innerText = `${accuracy}%`;
+
+            if (accuracy >= 90) {
+                badge.className = "w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl font-black border-4 shadow-xl bg-emerald-500/10 border-emerald-500 text-emerald-400 shadow-emerald-500/20";
+                title.innerText = "Outstanding Mastery! 🌟";
+                message.innerText = "You have an expert understanding of variables, sprite properties, coordinates, and Game Lab logic!";
+            } else if (accuracy >= 70) {
+                badge.className = "w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl font-black border-4 shadow-xl bg-brand-500/10 border-brand-500 text-brand-400 shadow-brand-500/20";
+                title.innerText = "Great Job! 🚀";
+                message.innerText = "You have a solid handle on Code.org sprites and variables. Review your missed questions to hit 100%!";
+            } else {
+                badge.className = "w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl font-black border-4 shadow-xl bg-amber-500/10 border-amber-500 text-amber-400 shadow-amber-500/20";
+                title.innerText = "Keep Practicing! 💪";
+                message.innerText = "Variables and sprites take practice! Review the explanations below and try retrying the missed questions.";
+            }
+
+            // Populate Missed Questions Section
+            const missedList = document.getElementById('missed-list');
+            const missedSection = document.getElementById('missed-questions-section');
+            const retryMissedBtn = document.getElementById('retry-missed-btn');
+            
+            const missedAnswers = userAnswers.filter(a => !a.isCorrect);
+
+            if (missedAnswers.length > 0) {
+                missedSection.classList.remove('hidden');
+                retryMissedBtn.classList.remove('hidden');
+                document.getElementById('missed-count-tag').innerText = `${missedAnswers.length} Missed`;
+
+                missedList.innerHTML = '';
+                missedAnswers.forEach(item => {
+                    const q = item.question;
+                    const div = document.createElement('div');
+                    div.className = "bg-slate-800/80 border border-slate-700/80 rounded-xl p-4 text-xs space-y-2";
+                    div.innerHTML = `
+                        <div class="font-bold text-slate-200 text-sm">${escapeHtml(q.question)}</div>
+                        ${q.code ? `<pre class="bg-slate-950 p-2 rounded text-slate-300 font-mono text-[11px] overflow-x-auto">${escapeHtml(q.code)}</pre>` : ''}
+                        <div class="text-rose-400"><strong>Your Answer:</strong> ${escapeHtml(q.options[item.selectedIndex])}</div>
+                        <div class="text-emerald-400"><strong>Correct Answer:</strong> ${escapeHtml(q.options[q.correct])}</div>
+                        <div class="text-slate-400 bg-slate-900/60 p-2.5 rounded-lg mt-1 border border-slate-800">
+                            <i class="fa-solid fa-lightbulb text-amber-400 mr-1"></i> ${escapeHtml(q.explanation)}
+                        </div>
+                    `;
+                    missedList.appendChild(div);
+                });
+            } else {
+                missedSection.classList.add('hidden');
+                retryMissedBtn.classList.add('hidden');
+            }
+        }
+
+        // Retry only missed questions
+        function retryMissedQuestions() {
+            const missedQuestions = userAnswers.filter(a => !a.isCorrect).map(a => a.question);
+            if (missedQuestions.length === 0) return;
+
+            activeQuestions = missedQuestions;
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            scoreCorrect = 0;
+            scoreIncorrect = 0;
+
+            document.getElementById('summary-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            document.getElementById('header-question-counter').classList.remove('hidden');
+
+            renderQuestion();
+        }
+
+        // Restart entire quiz
+        function restartQuiz() {
+            document.getElementById('summary-screen').classList.add('hidden');
+            document.getElementById('start-screen').classList.remove('hidden');
+            document.getElementById('header-question-counter').classList.add('hidden');
+        }
+
+        // Utility: Escape HTML tags for safety
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
